@@ -1,0 +1,93 @@
+import requests
+from requests.auth import HTTPDigestAuth
+import asyncio
+import time
+
+
+class MyEnergiClient:
+    def __init__(self, config: dict, cache_ttl: int = 8 * 3600):
+        """
+        config erwartet ein Dict mit:
+        {
+            "serial_number": "<HUB-SERIAL>",
+            "api_key": "<API-KEY>"
+        }
+        cache_ttl: Dauer (Sekunden), wie lange der Server gecached wird (default 8h).
+        """
+        self.config = config
+        self.cache_ttl = cache_ttl
+        self._cached_server = None
+        self._cache_expiry = 0
+
+    # ----------------------------
+    # interne Hilfsfunktionen
+    # ----------------------------
+    def _get_target_server_sync(self) -> str:
+        """Fragt den Director ab, mit Caching."""
+        now = time.time()
+        if self._cached_server and now < self._cache_expiry:
+            return self._cached_server
+
+        serial = self.config["serial_number"]
+        api_key = self.config["api_key"]
+        url = f"https://director.myenergi.net/cgi-jstatus-{serial}"
+
+        resp = requests.get(url, auth=HTTPDigestAuth(serial, api_key))
+        target = resp.headers.get("X_MYENERGI-asn")
+        if not target:
+            raise RuntimeError("Konnte keinen Zielserver vom Director ermitteln.")
+
+        self._cached_server = target
+        self._cache_expiry = now + self.cache_ttl
+        return target
+
+    def _invalidate_cache(self):
+        """Cache löschen (z. B. nach Fehler)."""
+        self._cached_server = None
+        self._cache_expiry = 0
+
+    def _set_mode_sync(self, mode: int) -> dict:
+        serial = self.config["serial_number"]
+        api_key = self.config["api_key"]
+
+        try:
+            target_server = self._get_target_server_sync()
+            url = f"https://{target_server}/cgi-zappi-mode-Z{serial}-{mode}-0-0-0000"
+            resp = requests.get(url, auth=HTTPDigestAuth(serial, api_key))
+            resp.raise_for_status()
+            return resp.json()
+        except Exception:
+            self._invalidate_cache()
+            raise
+
+    def _get_status_sync(self) -> dict:
+        serial = self.config["serial_number"]
+        api_key = self.config["api_key"]
+
+        try:
+            target_server = self._get_target_server_sync()
+            url = f"https://{target_server}/cgi-jstatus-*"
+            resp = requests.get(url, auth=HTTPDigestAuth(serial, api_key))
+            resp.raise_for_status()
+            data = resp.json()
+
+            zappis = data.get("zappi", [])
+            for z in zappis:
+                if str(z.get("sno")) == str(serial):
+                    mode = z.get("zmo")
+                    sta = z.get("sta")
+                    return {
+                        "mode": {
+                            1: "Fast",
+                            2: "Eco",
+                            3: "Eco+",
+                            4: "Stop"
+                        }.get(mode, f"Unbekannt ({mode})"),
+                        "status": {
+                            1: "Bereit",
+                            3: "Lädt",
+                            5: "Warten auf Überschuss",
+                            6: "Vollgeladen",
+                            7: "Getrennt",
+                            8: "Fehler",
+                            9: "EV erkannt}}

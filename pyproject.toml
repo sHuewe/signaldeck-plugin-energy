@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "signaldeck-plugin-energy"
+version = "0.1.0"
+description = "Energy plugin for SignalDeck"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+  "signaldeck-sdk>=0.1.0",
+  "signaldeck-ui>=0.1.0",
+  "flask>=3.0",
+  "goodwe>=0.3.1",
+  "jsonpath-ng>=1.6.1",
+  "requests>=2.32.3"
+]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["signaldeck_plugin_energy*"]
+
+[tool.setuptools.package-data]
+signaldeck_plugin_energy = [
+  "templates/**/*"
+]

@@ -1,0 +1,31 @@
+{% from "core/_utils.html" import renderButton %}
+
+
+<br/>
+
+<div class="state-container">
+    <div class="state-row head">
+        <div class="state-label wide">Wallbox Steuerung</div>
+    </div>
+    {% for buttonName in displayData.button_names_ordered() %}
+{{ renderButton(buttonName,displayData) }}
+{% endfor %}
+    <div class="state-row">
+        <div class="state-label"> Status </div>
+        <div class="state-value">{{ displayData.getStatus() }} </div>
+    </div>
+    <div class="state-row">
+        <div class="state-label"> Geladen </div>
+        <div class="state-value">{{ displayData.getEnergyCharged() }} </div>
+    </div>
+    <div class="state-row">
+        <div class="state-label"> Untere Grenze Speicher (%) </div>
+        <div class="state-value">{{ renderButton("min_bat_soc_m10",displayData) }}
+        {{ renderButton("min_bat_soc_m1",displayData) }}
+        {{ displayData.min_bat_soc }}
+        {{ renderButton("min_bat_soc_p1",displayData) }}
+        {{ renderButton("min_bat_soc_p10",displayData) }}<br/>
+        {{ renderButton("min_bat_soc_dyn",displayData) }}</div>
+    </div>
+
+</div>

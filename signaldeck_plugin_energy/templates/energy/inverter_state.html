@@ -1,0 +1,18 @@
+<div class="state-container">
+    {% if "date" in values.keys() %}
+    <div class="state-row head">
+        <div class="state-label">{{ values["date"] }}</div>
+    </div>
+    {% endif %}
+    {% for field in ["vpv1","ipv1","ppv1","vpv2","ipv2","ppv2","ppv","e_day"]%}
+    {% if field in values.keys() %}
+    <div class="state-row">
+        <div class="state-label">{{ i18n[field] }}</div>
+        <div class="state-value">{{ values[field]}} </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% if "error" in values.keys() %}
+    <div>{{ values["error"] }}</div>
+    {% endif %}
+</div>

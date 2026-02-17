@@ -1,0 +1,65 @@
+{% from "core/_utils.html" import renderButton %}
+
+<div class="state-container">
+<div class="state-row">
+<div class="state-buttons">
+{% for buttonName in ["day","month","year"] %}
+{{ renderButton(buttonName,displayData) }}
+{% endfor %}
+</div>
+</div>
+<div class="state-row">
+<div class="state-buttons">
+{% for buttonName in ["prev","next","24h","72h","7d","30d"] %}
+{{ renderButton(buttonName,displayData) }}
+{% endfor %}
+{{ renderButton("daily",displayData, additionalCss=" align-right") }}
+</div>
+</div>
+    <div class="state-row head">
+        <div class="state-label wide">{{ displayData.title }}</div>
+    </div>
+    <div class="state-row">
+        <div class="state-label">Strom Bezug (kWh)</div>
+        <div class="state-value">{{ displayData.power_diff_in|round(2, 'floor')}} </div>
+    </div>
+    <div class="state-row">
+        <div class="state-label">Strom Einspeisung (kWh)</div>
+        <div class="state-value">{{ displayData.power_diff_out|round(2, 'floor')}} </div>
+    </div>
+    <div class="state-row">
+        <div class="state-label">Ertrag (kWh)</div>
+        <div class="state-value">{{ displayData.pv_gen|round(2, 'floor')}} </div>
+    </div>
+    <div class="state-row">
+        <div class="state-label">Eigenverbrauch (kWh)</div>
+        <div class="state-value">{{ displayData.pv_used|round(2,'floor')}} </div>
+    </div>
+    <div class="state-row">
+        <div class="state-label">Gesamtverbrauch (kWh)</div>
+        <div class="state-value">{{ displayData.total_power_usage|round(2, 'floor')}} </div>
+    </div>
+    <div class="state-row">
+        <div class="state-label">Batterieladung (%)</div>
+        <div class="state-value">{{ displayData.battery_soc}} </div>
+    </div>
+        <div class="state-row">
+        <div class="state-label">Batterietemperatur (°C)</div>
+        <div class="state-value">{{ displayData.battery_temp|round(1, 'floor')}} </div>
+    </div>
+    <div class="state-row">
+        <div class="state-label">Strom Shelly (W)</div>
+        <div class="state-value">{{ displayData.curr_power_alt}} </div>
+    </div>
+    <div class="state-row">
+        <div class="state-label">Autarkie (%)</div>
+        <div class="state-value">{{ displayData.autarkie|round(2, 'floor')}} </div>
+    </div>
+    <div class="state-row large">
+        <div class="state-label">PV / Batterie / Gesamt</div>
+        <div class="state-value">{{ displayData.curr_pv}}</div>
+        <div class="state-value">{{ displayData.battery_power}}</div>
+        <div class="state-value {{ 'red' if displayData.curr_power>0 else 'green' }}">{{ displayData.curr_power }}
+        </div>
+    </div>
+</div>
