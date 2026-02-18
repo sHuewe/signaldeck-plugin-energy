@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "signaldeck-plugin-energy"
-version = "0.1.0"
+version = "0.1.1"
 description = "Energy plugin for SignalDeck"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-  "signaldeck-sdk>=0.1.0",
-  "signaldeck-ui>=0.1.0",
+  "signaldeck-sdk>=0.1.1",
+  "signaldeck-ui>=0.1.1",
   "flask>=3.0",
   "goodwe>=0.3.1",
   "jsonpath-ng>=1.6.1",
