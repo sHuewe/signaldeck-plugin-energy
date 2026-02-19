@@ -55,8 +55,12 @@
         <div class="state-label">Autarkie (%)</div>
         <div class="state-value">{{ displayData.autarkie|round(2, 'floor')}} </div>
     </div>
-    <div class="state-row large">
-        <div class="state-label">PV / Batterie / Gesamt</div>
+    <div class="state-row-3 large center">
+        <div class="state-label">PV</div>
+        <div class="state-label">Batterie</div>
+        <div class="state-label">Gesamt</div>
+    </div>
+    <div class="state-row-3 large center">
         <div class="state-value">{{ displayData.curr_pv}}</div>
         <div class="state-value">{{ displayData.battery_power}}</div>
         <div class="state-value {{ 'red' if displayData.curr_power>0 else 'green' }}">{{ displayData.curr_power }}
